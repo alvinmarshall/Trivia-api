@@ -123,26 +123,7 @@ curl http://localhost:5000/questions -X POST -H "Content-Type: application/json"
 ```
 ```json
 {
-   "categories": [
-      "Science",
-      "Art",
-      "Geography",
-      "History",
-      "Entertainment",
-      "Sports"
-   ],
-   "current_category": [],
-   "questions": [
-      {
-         "answer": "Apollo 13",
-         "category": 5,
-         "difficulty": 4,
-         "id": 2,
-         "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
-      }
-   ],
-   "success": true,
-   "total_questions": 3
+   "success": true
 }
 ```
 
