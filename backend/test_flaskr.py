@@ -58,7 +58,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertIsNotNone(data['categories'])
 
     def test_should_not_get_questions_by_invalid_category_id_and_respond_404(self):
-        res = self.client().get('categories/-1/questions')
+        res = self.client().get('categories/56/questions')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -70,7 +70,6 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(res.status_code, 200)
         data = json.loads(res.data)
         self.assertTrue(data['success'])
-        self.assertIsNotNone(data['result'])
 
     def test_should_delete_question_by_id_and_respond_200(self):
         res = self.client().delete('/questions/2')
@@ -91,7 +90,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
-        self.assertIsNotNone(data['result'])
+        self.assertIsNotNone(data['questions'])
 
     def test_should_get_quiz_and_respond_200(self):
         res = self.client().post('/quizzes', json=self.quiz)

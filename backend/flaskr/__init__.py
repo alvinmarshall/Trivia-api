@@ -47,7 +47,7 @@ def create_app(test_config=None):
         # number of total result, current category, categories.
         return jsonify({
             'success': True,
-            'result': data,
+            'questions': data,
             'total_questions': len(result),
             'current_category': [],
             'categories': [cat.type for cat in Category.query.all()],
@@ -63,13 +63,8 @@ def create_app(test_config=None):
                 abort(404)
 
             question.delete()
-            selection = Question.query.order_by(Question.id).all()
-            current_questions = paginate_questions(request, selection)
             return jsonify({
                 'success': True,
-                'deleted': question_id,
-                'result': current_questions,
-                'total_questions': len(selection)
             })
 
         except Exception as e:
@@ -93,7 +88,7 @@ def create_app(test_config=None):
                 data = [question.format() for question in result]
                 return jsonify({
                     'success': True,
-                    'result': data,
+                    'questions': data,
                     'total_questions': len(data),
                 })
 
@@ -105,14 +100,8 @@ def create_app(test_config=None):
                     difficulty=new_difficulty
                 )
                 question.insert()
-
-                selection = Question.query.order_by(Question.id).all()
-                data = paginate_questions(request, selection)
-
                 return jsonify({
                     'success': True,
-                    'result': data,
-                    'total_questions': len(Question.query.all())
                 })
         except Exception as e:
             print(e)
@@ -124,8 +113,7 @@ def create_app(test_config=None):
         category = Category.query.filter(
             Category.id == cat_id).first()
 
-        selection = Question.query.order_by(Question.id).filter(
-            Question.category == cat_id).all()
+        selection = Question.query.order_by(Question.id).filter(Question.category == cat_id).all()
         current_questions = paginate_questions(request, selection)
 
         if len(current_questions) == 0:
@@ -133,9 +121,9 @@ def create_app(test_config=None):
 
         return jsonify({
             'success': True,
-            'result': current_questions,
+            'questions': current_questions,
             'total_questions': len(selection),
-            'categories': [cat.type for cat in Category.query.all()],
+            'categories': [category.type for category in Category.query.all()],
             'current_category': category.format()
         })
 
@@ -150,19 +138,20 @@ def create_app(test_config=None):
             category_id = quiz_category['id']
 
             if category_id == 0:
-                questions = Question.query.filter(
-                    Question.id.notin_(previous_questions)).all()
+                questions = Question.query.filter(Question.id.notin_(previous_questions)).all()
             else:
                 questions = Question.query.filter(
                     Question.id.notin_(previous_questions),
-                    Question.category == category_id).all()
+                    Question.category == category_id
+                ).all()
+
             question = None
             if questions:
                 question = random.choice(questions)
 
             return jsonify({
                 'success': True,
-                'question': question.format()
+                'question': question.format() if question is not None else question
             })
 
         except Exception as e:
